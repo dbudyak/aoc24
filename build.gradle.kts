@@ -30,6 +30,7 @@ dependencies {
     val kotestVersion = "5.9.1"
 
     implementation("io.github.jadarma.aockt:aockt-core:$aocktVersion")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.9.0")
     testImplementation("io.github.jadarma.aockt:aockt-test:$aocktVersion")
     testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
 }
