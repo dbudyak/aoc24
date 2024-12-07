@@ -17,15 +17,15 @@ object Y2024D07 : Solution {
         ).mapValues { it.value.flatten() }
 
     override fun partOne(input: String) = parseInput(input)
-        .filter { (result, input) -> findMatchingResultsWithContactenation(input, result).isNotEmpty() }
+        .filter { (result, input) -> findMatchingResults(input, result).isNotEmpty() }
         .keys.sum()
 
     override fun partTwo(input: String) = parseInput(input)
-        .filter { (result, input) -> findMatchingResultsWithContactenation(input, result, true).isNotEmpty() }
+        .filter { (result, input) -> findMatchingResults(input, result, true).isNotEmpty() }
         .keys.sum()
 
 
-    fun findMatchingResultsWithContactenation(
+    private fun findMatchingResults(
         elements: List<Long>,
         target: Long,
         withContactenation: Boolean = false
