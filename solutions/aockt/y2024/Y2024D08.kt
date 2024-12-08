@@ -22,15 +22,15 @@ fun List<Antenna>.toLines(): List<AntennaLine> =
         }
         .distinctBy { listOf(it.a, it.b).sortedBy { antenna -> antenna.frequency } }
 
-fun AntennaLine.extrapolated(): AntennaLine {
+fun AntennaLine.extrapolated(scale: Int = 1): AntennaLine {
     require(a.frequency == b.frequency)
 
     val dx = b.x - a.x
     val dy = b.y - a.y
 
     val antennaLine = AntennaLine(
-        a = Antenna(frequency = a.frequency, x = a.x - dx, y = a.y - dy),
-        b = Antenna(frequency = a.frequency, x = b.x + dx, y = b.y + dy)
+        a = Antenna(frequency = a.frequency, x = a.x - scale * dx, y = a.y - scale * dy),
+        b = Antenna(frequency = a.frequency, x = b.x + scale * dx, y = b.y + scale * dy)
     )
 
     return antennaLine
@@ -55,17 +55,22 @@ object Y2024D08 : Solution {
         return antennas
     }
 
-    override fun partOne(input: String) = parseInput(input)
-        .map { line -> line.extrapolated() }
-        .flatMap { listOf(it.a, it.b) }
-        .filter { antenna -> isWithinBounds(antenna, input) }
-        .distinctBy { it.x to it.y }
-        .distinct()
-        .onEach { println(it) }
-        .count()
-
     private fun isWithinBounds(ea: Antenna, input: String): Boolean =
         ea.x in (0..<input.lines()[0].length) && ea.y in (0..<input.lines().size)
 
-    override fun partTwo(input: String) = Unit
+
+    override fun partOne(input: String) = parseInput(input)
+        .asSequence()
+        .map { it.extrapolated() }
+        .flatMap { listOf(it.a, it.b) }
+        .distinctBy { it.x to it.y }
+        .filter { antenna -> isWithinBounds(antenna, input) }
+        .count()
+
+    override fun partTwo(input: String) = parseInput(input)
+        .asSequence()
+        .flatMap { line -> (1..25).map { scale -> line.extrapolated(scale) }.flatMap { listOf(it.a, it.b) } }
+        .distinctBy { it.x to it.y }
+        .filter { antenna -> isWithinBounds(antenna, input) }
+        .count()
 }

@@ -103,11 +103,13 @@ class Y2024D08Test :
             val array = testInput.split("\n").map { it.toCharArray() }.toTypedArray()
 
             parseInput(testInput)
-                .map { line -> line.extrapolated() }
-                .flatMap { listOf(it.a, it.b) }
+                .asSequence()
+                .flatMap { line ->
+                    (1..25).map { scale -> line.extrapolated(scale) }.flatMap { listOf(it.a, it.b) }
+                }
                 .distinct()
                 .forEach { antenna ->
-                    if (antenna.y in (0..12) && antenna.x in (0..12))
+                    if (antenna.y in (0..11) && antenna.x in (0..11))
                         if (array[antenna.y][antenna.x] == '.')
                             array[antenna.y][antenna.x] = '#'
                 }
