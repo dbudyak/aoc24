@@ -44,7 +44,7 @@ object Y2024D09 : Solution {
 
     fun moveFiles(blocks: List<Block>) : List<Block> {
 
-        fun moveFiles(lastId: Long = blocks.getLastFileId(), tempList: MutableList<Block>): MutableList<Block> {
+        fun moveFiles(lastId: Long, tempList: MutableList<Block>): MutableList<Block> {
             val lastFile = tempList.getLastFileById(lastId)
             val emptyIdx = tempList.findFirstEmptyId(lastFile.size)
             var result = tempList
@@ -74,8 +74,7 @@ object Y2024D09 : Solution {
     fun List<Block>.findFirstEmptyId(fileSize: Int) : Int = let { list ->
         list.forEachIndexed { index, block ->
             if (block == Block.EMPTY && index + fileSize <= list.size) {
-                val printSublist = list.subList(index, index + fileSize)
-                if (printSublist.all { it == Block.EMPTY }) {
+                if (list.subList(index, index + fileSize).all { it == Block.EMPTY }) {
                     return@let index
                 }
             }
