@@ -41,15 +41,59 @@ object Y2024D09 : Solution {
         return list + blocks.minus(list.toSet())
     }
 
+
+    fun moveFiles(blocks: List<Block>) : List<Block> {
+
+        fun moveFiles(lastId: Long = blocks.getLastFileId(), tempList: MutableList<Block>): MutableList<Block> {
+            val lastFile = tempList.getLastFileById(lastId)
+            val emptyIdx = tempList.findFirstEmptyId(lastFile.size)
+            var result = tempList
+
+            if (emptyIdx != -1 && tempList.getStartIndexOfLastFile(lastFile) > emptyIdx) {
+                val removed = tempList.removeLastFile(lastId)
+                val filled = removed.fillEmpty(emptyIdx, lastFile)
+                result = filled.toMutableList()
+            }
+
+            return if (lastId <= 0) {
+                result
+            } else {
+                moveFiles(lastId.minus(1), result)
+            }
+        }
+
+        return moveFiles(blocks.getLastFileId(), blocks.toMutableList())
+    }
+
+    fun List<Block>.getLastFileById(id: Long): List<Block> = this.filter { it.id == id }
+    fun List<Block>.getStartIndexOfLastFile(id: List<Block>): Int = this.indexOfFirst { it == id.first() }
+    fun List<Block>.getLastFileId(): Long = this.last { it != Block.EMPTY }.id
+    fun List<Block>.removeLastFile(lastId: Long): List<Block> = this.map { if (it.id == lastId) Block.EMPTY else it}
+    fun List<Block>.fillEmpty(startIdx: Int, file: List<Block>): List<Block> =
+        this.subList(0, startIdx) + file + this.subList(startIdx + file.size, this.size)
+    fun List<Block>.findFirstEmptyId(fileSize: Int) : Int = let { list ->
+        list.forEachIndexed { index, block ->
+            if (block == Block.EMPTY && index + fileSize <= list.size) {
+                val printSublist = list.subList(index, index + fileSize)
+                if (printSublist.all { it == Block.EMPTY }) {
+                    return@let index
+                }
+            }
+        }
+        return@let -1
+    }
+
     fun calculateChecksum(blocks: List<Block>): Long = blocks
-        .filterNot { it == Block.EMPTY }
         .foldIndexed(0) { index, acc, block ->
-            acc + block.id * index
+            if (block != Block.EMPTY) acc + block.id * index else acc
         }
 
     override fun partOne(input: String) = diskMapToBlocks(input)
         .let { blocks -> moveBlocks(blocks) }
         .let { blocks -> calculateChecksum(blocks) }
 
-    override fun partTwo(input: String) = Unit
+    override fun partTwo(input: String) = diskMapToBlocks(input)
+        .let { blocks -> moveFiles(blocks) }
+        .let { blocks -> calculateChecksum(blocks) }
+
 }
