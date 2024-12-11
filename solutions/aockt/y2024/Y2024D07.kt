@@ -28,7 +28,7 @@ object Y2024D07 : Solution {
     private fun findMatchingResults(
         elements: List<Long>,
         target: Long,
-        withContactenation: Boolean = false
+        withConcatenation: Boolean = false
     ): List<String> {
         val results = mutableListOf<String>()
 
@@ -42,7 +42,7 @@ object Y2024D07 : Solution {
 
             evaluate(current + elements[index], "$expression + ${elements[index]}", index + 1)
             evaluate(current * elements[index], "$expression * ${elements[index]}", index + 1)
-            if (withContactenation) {
+            if (withConcatenation) {
                 evaluate("$current${elements[index]}".toLong(), "$expression || ${elements[index]}", index + 1)
             }
         }
