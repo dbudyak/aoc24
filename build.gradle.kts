@@ -2,7 +2,6 @@ import org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
 import org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED
 import org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
 import org.gradle.kotlin.dsl.KotlinClosure2
-
 plugins {
     kotlin("jvm") version "2.1.0"
 }
@@ -60,4 +59,8 @@ tasks.test {
             }
         }))
     }
+}
+
+tasks.withType<Test>().configureEach {
+    jvmArgs = listOf("-Xmx1g")
 }
